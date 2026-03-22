@@ -14,6 +14,27 @@ const { setupCounterResetJobs } = require('./jobs/resetCounters');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+function isAllowedOrigin(origin) {
+  if (!origin) return false;
+  try {
+    const url = new URL(origin);
+    const hostname = url.hostname;
+    const allowedHosts = [
+      'www.youtube.com',
+      'studio.youtube.com',
+      'youtube.com',
+      'citelines.org',
+      'www.citelines.org'
+    ];
+    if (allowedHosts.includes(hostname)) return true;
+    if (hostname.endsWith('.railway.app')) return true;
+    if (process.env.NODE_ENV === 'development' && hostname === 'localhost') return true;
+    return false;
+  } catch {
+    return false;
+  }
+}
+
 // Trust Railway proxy for rate limiting and X-Forwarded-For headers
 // Use 1 (not true) to avoid ERR_ERL_PERMISSIVE_TRUST_PROXY from express-rate-limit
 app.set('trust proxy', 1);
@@ -28,7 +49,7 @@ app.use((req, res, next) => {
   const origin = req.headers.origin;
 
   // Allow YouTube.com, chrome extensions, and citelines.org
-  if (origin && (origin.includes('youtube.com') || origin.startsWith('chrome-extension://') || origin.includes('citelines.org'))) {
+  if (origin && (isAllowedOrigin(origin) || origin.startsWith('chrome-extension://'))) {
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -50,18 +71,13 @@ const corsOptions = {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
 
-    // Allow same-origin requests (admin dashboard)
-    if (origin && (origin.includes('railway.app') || origin.includes('localhost') || origin.includes('citelines.org'))) {
-      return callback(null, true);
-    }
-
     // Allow chrome-extension:// origins
     if (origin.startsWith('chrome-extension://')) {
       return callback(null, true);
     }
 
-    // Allow YouTube.com (both development and production)
-    if (origin && origin.includes('youtube.com')) {
+    // Allow validated origins (exact hostname match)
+    if (isAllowedOrigin(origin)) {
       return callback(null, true);
     }
 
@@ -71,11 +87,6 @@ const corsOptions = {
       : [];
 
     if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-
-    // Allow localhost in development
-    if (process.env.NODE_ENV === 'development' && origin && origin.includes('localhost')) {
       return callback(null, true);
     }
 
