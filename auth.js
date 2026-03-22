@@ -356,9 +356,8 @@ class AuthManager {
         }
       });
 
-      // Only treat an explicit 401 as an invalid token — not network errors
       if (response.status === 401) return false;
-      if (!response.ok) return false;
+      if (!response.ok) return false; // 5xx and other errors fail closed
       return true;
     } catch (error) {
       // Network error — assume token is still valid to avoid spurious logouts

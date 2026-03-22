@@ -201,7 +201,7 @@ async function showShareModal(videoId, annotations, videoTitle, onShare) {
             ✓ Share created successfully!
           </div>
           <div style="background: white; padding: 8px; border-radius: 4px; word-break: break-all; font-size: 13px; font-family: monospace;">
-            ${result.shareUrl}
+            ${escapeHtml(result.shareUrl)}
           </div>
           <button id="copy-link-btn" style="
             background: #4CAF50;
