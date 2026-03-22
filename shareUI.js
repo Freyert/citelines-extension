@@ -3,6 +3,22 @@
  * Handles UI for sharing and importing annotations
  */
 
+/**
+ * Escape a string for safe insertion into innerHTML.
+ *
+ * Template literals interpolated directly into innerHTML are an XSS sink:
+ * if user-controlled content contains HTML tags or event-handler attributes
+ * (e.g. <img src=x onerror="...">) they will be parsed and executed by the
+ * browser. This is particularly dangerous in a content script context where
+ * executing code has access to chrome.storage and the extension's auth token.
+ *
+ * Using the browser's own text node serialisation (textContent → innerHTML)
+ * is preferred over a regex or manual replacement because it correctly handles
+ * all HTML entities without the risk of an incomplete escape list.
+ *
+ * @param {*} str - Value to escape (non-strings are coerced; null/undefined → '')
+ * @returns {string} HTML-escaped string safe for use inside an innerHTML template
+ */
 function escapeHtml(str) {
   if (str == null) return '';
   const div = document.createElement('div');
