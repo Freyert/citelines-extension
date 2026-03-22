@@ -15,6 +15,12 @@ class AuthManager {
    * @returns {Promise<boolean>} True if user is logged in
    */
   async initialize() {
+    // NOTE: chrome.storage.session is cleared on browser close and is not
+    // accessible to web page scripts, making it safer than chrome.storage.local.
+    // However, extension content scripts can still read it — the ideal
+    // architecture is to keep the token in the background service worker's
+    // memory only and have content scripts message the background for
+    // authenticated requests. That refactor is tracked separately.
     const result = await chrome.storage.session.get(['jwtToken', 'currentUser']);
 
     if (result.jwtToken && result.currentUser) {

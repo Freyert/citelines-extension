@@ -50,7 +50,7 @@ class AnnotatorAPI {
   getStorageKey() {
     // Use different storage keys for incognito vs regular mode
     // This ensures each context has its own anonymous ID
-    const isIncognito = chrome.extension.inIncognitoContext;
+    const isIncognito = chrome.extension?.inIncognitoContext ?? false;
     return isIncognito ? 'anonymousId_incognito' : 'anonymousId';
   }
 
@@ -64,7 +64,7 @@ class AnnotatorAPI {
     }
 
     const storageKey = this.getStorageKey();
-    const isIncognito = chrome.extension.inIncognitoContext;
+    const isIncognito = chrome.extension?.inIncognitoContext ?? false;
 
     // Try to get existing anonymous ID from storage
     const result = await chrome.storage.local.get([storageKey]);
