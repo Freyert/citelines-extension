@@ -132,17 +132,8 @@ async function authenticateUser(req, res, next) {
     // Strategy 2: Try anonymous ID (anonymous users)
     const anonymousId = req.headers['x-anonymous-id'];
 
-    // Debug logging for ownership issue
-    console.log(`[Auth Debug] Route: ${req.method} ${req.path}, Anonymous-ID header: ${anonymousId ? anonymousId.substring(0, 12) + '...' : 'NONE'}`);
-
     if (anonymousId) {
       const user = await User.findByAnonymousId(anonymousId);
-
-      if (user) {
-        console.log(`[Auth Debug] Found user: ${user.display_name} (${user.id})`);
-      } else {
-        console.log(`[Auth Debug] Anonymous ID not found in database`);
-      }
 
       if (user) {
         // Banned users authenticate normally — read-only enforced at write endpoints

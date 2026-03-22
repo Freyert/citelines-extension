@@ -161,9 +161,6 @@ router.get('/:token', optionalAuth, asyncHandler(async (req, res) => {
 
   const isOwner = req.user && req.user.id === share.user_id;
 
-  // Debug logging for ownership issue
-  console.log(`[Share Debug] Token: ${share.share_token}, req.user: ${req.user?.id || 'NONE'}, share.user_id: ${share.user_id}, isOwner: ${isOwner}`);
-
   res.json({
     shareToken: share.share_token,
     videoId: share.video_id,
