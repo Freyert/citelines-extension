@@ -3,6 +3,13 @@
  * Handles UI for sharing and importing annotations
  */
 
+function escapeHtml(str) {
+  if (str == null) return '';
+  const div = document.createElement('div');
+  div.textContent = String(str);
+  return div.innerHTML;
+}
+
 /**
  * Create share button
  * @returns {HTMLElement} Share button
@@ -113,7 +120,7 @@ async function showShareModal(videoId, annotations, videoTitle, onShare) {
 
     <div style="margin-bottom: 16px; color: #5f6368; font-size: 14px;">
       <div style="margin-bottom: 8px;">
-        <strong>Video:</strong> ${videoTitle}
+        <strong>Video:</strong> ${escapeHtml(videoTitle)}
       </div>
       <div>
         <strong>Annotations:</strong> ${annotations.length}
@@ -235,7 +242,7 @@ async function showShareModal(videoId, annotations, videoTitle, onShare) {
       resultDiv.style.display = 'block';
       resultDiv.innerHTML = `
         <div style="background: #ffebee; border: 1px solid #f44336; border-radius: 4px; padding: 12px; color: #c62828; font-size: 14px;">
-          ✗ Failed to create share: ${error.message}
+          ✗ Failed to create share: ${escapeHtml(error.message)}
         </div>
       `;
 
@@ -286,7 +293,7 @@ function showImportModal(shareData, localAnnotations, onImport) {
     const time = formatTime(ann.timestamp);
     const text = ann.text.length > 100 ? ann.text.substring(0, 100) + '...' : ann.text;
     return `<div style="padding: 8px; background: #f8f9fa; border-radius: 4px; margin-bottom: 8px;">
-      <strong style="color: #1976D2;">${time}</strong> - ${text}
+      <strong style="color: #1976D2;">${time}</strong> - ${escapeHtml(text)}
     </div>`;
   }).join('');
 
@@ -298,7 +305,7 @@ function showImportModal(shareData, localAnnotations, onImport) {
     <h2 style="margin: 0 0 16px 0; color: #202124; font-size: 20px;">Import Shared Annotations</h2>
 
     <div style="margin-bottom: 16px;">
-      ${shareData.title ? `<div style="color: #5f6368; font-size: 14px; margin-bottom: 8px;"><strong>Title:</strong> ${shareData.title}</div>` : ''}
+      ${shareData.title ? `<div style="color: #5f6368; font-size: 14px; margin-bottom: 8px;"><strong>Title:</strong> ${escapeHtml(shareData.title)}</div>` : ''}
       <div style="color: #5f6368; font-size: 14px; margin-bottom: 8px;">
         <strong>Shared annotations:</strong> ${shareData.annotations.length}
       </div>
@@ -494,7 +501,7 @@ async function showBrowseModal(videoId, onSelectShare) {
         transition: border-color 0.2s;
       ">
         <div style="font-weight: 500; color: #202124; margin-bottom: 4px;">
-          ${share.title || `Share #${index + 1}`}
+          ${escapeHtml(share.title) || `Share #${index + 1}`}
         </div>
         <div style="font-size: 13px; color: #5f6368;">
           ${share.annotationCount} annotations • ${share.viewCount} views
@@ -529,7 +536,7 @@ async function showBrowseModal(videoId, onSelectShare) {
     console.error('Failed to load shares:', error);
     modal.querySelector('#browse-content').innerHTML = `
       <div style="text-align: center; padding: 40px; color: #d32f2f;">
-        Failed to load shares: ${error.message}
+        Failed to load shares: ${escapeHtml(error.message)}
       </div>
     `;
   }
