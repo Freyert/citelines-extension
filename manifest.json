@@ -13,13 +13,15 @@
     "client_id": "604396819800-opo6j4nss7jnfbp4sn83dsropql05o9b.apps.googleusercontent.com",
     "scopes": ["https://www.googleapis.com/auth/youtube.readonly"]
   },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self';"
+  },
   "background": {
     "service_worker": "background.js"
   },
   "host_permissions": [
     "https://www.youtube.com/*",
-    "https://studio.youtube.com/*",
-    "http://localhost:3000/*"
+    "https://studio.youtube.com/*"
   ],
   "content_scripts": [
     {
