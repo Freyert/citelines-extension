@@ -15,7 +15,7 @@ class AuthManager {
    * @returns {Promise<boolean>} True if user is logged in
    */
   async initialize() {
-    const result = await chrome.storage.local.get(['jwtToken', 'currentUser']);
+    const result = await chrome.storage.session.get(['jwtToken', 'currentUser']);
 
     if (result.jwtToken && result.currentUser) {
       this.token = result.jwtToken;
@@ -143,7 +143,7 @@ class AuthManager {
     this.token = data.token;
     this.user = data.user;
 
-    await chrome.storage.local.set({
+    await chrome.storage.session.set({
       jwtToken: this.token,
       currentUser: this.user
     });
@@ -198,7 +198,7 @@ class AuthManager {
       youtubeVerified: true,
       youtubeChannelTitle: channelTitle
     };
-    await chrome.storage.local.set({ currentUser: this.user });
+    await chrome.storage.session.set({ currentUser: this.user });
 
     // Clear anonymous ID — this account now has youtube_channel_id set, so
     // post-logout anonymous sessions must use a fresh account (same reason as
@@ -235,7 +235,7 @@ class AuthManager {
     this.token = data.token;
     this.user = data.user;
 
-    await chrome.storage.local.set({
+    await chrome.storage.session.set({
       jwtToken: this.token,
       currentUser: this.user
     });
@@ -270,7 +270,7 @@ class AuthManager {
     this.token = data.token;
     this.user = data.user;
 
-    await chrome.storage.local.set({
+    await chrome.storage.session.set({
       jwtToken: this.token,
       currentUser: this.user
     });
@@ -287,7 +287,7 @@ class AuthManager {
     this.token = null;
     this.user = null;
 
-    await chrome.storage.local.remove(['jwtToken', 'currentUser']);
+    await chrome.storage.session.remove(['jwtToken', 'currentUser']);
     console.log('[Auth] Logged out');
   }
 
